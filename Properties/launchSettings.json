@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "ShortAir (Package)": {
+      "commandName": "MsixPackage"
+    },
+    "ShortAir (Unpackaged)": {
+      "commandName": "Project"
+    }
+  }
+}

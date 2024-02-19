@@ -1,3 +1,5 @@
+using Microsoft.UI;
+using Microsoft.UI.Windowing;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Controls.Primitives;
@@ -18,6 +20,8 @@ using Windows.Devices.Bluetooth.Advertisement;
 using Windows.Devices.Bluetooth.GenericAttributeProfile;
 using Windows.Devices.Bluetooth;
 using System.Diagnostics;
+using Windows.Graphics;
+using System.Collections.ObjectModel;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -29,11 +33,18 @@ namespace ShortAir
     /// </summary>
     public sealed partial class MainWindow : Window
     {
-        App mainApp ;
-
+        App mainApp;
+        public IEnumerable<string> Items { get; }
+        public ObservableCollection<KeyCongfig> keyCongfigs;
+        private int MaxLength = 425;
         public MainWindow(App app)
         {
             this.InitializeComponent();
+            IntPtr hWnd = WinRT.Interop.WindowNative.GetWindowHandle(this);
+            WindowId myWndId = Win32Interop.GetWindowIdFromWindow(hWnd);
+            AppWindow appWindow = AppWindow.GetFromWindowId(myWndId);
+            appWindow.Resize(new SizeInt32(400, 600));
+            InitializeKeyConfigs();
             this.mainApp = app;
         }
         public void console(string text) { 
@@ -137,6 +148,15 @@ namespace ShortAir
             {
                 connectButton.IsEnabled = false;
                 console("connected");   
+            }
+        }
+
+        private void InitializeKeyConfigs()
+        {
+            keyCongfigs = new ObservableCollection<KeyCongfig>();
+            foreach(var recive in KeyCongfig.recives)
+            {
+                keyCongfigs.Add(new KeyCongfig(recive));
             }
         }
     }

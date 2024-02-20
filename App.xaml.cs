@@ -5,7 +5,6 @@ using System.IO;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading;
 using Windows.Devices.Bluetooth.GenericAttributeProfile;
-using Windows.Storage;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -53,7 +52,11 @@ namespace ShortAir
             {
                 data.Add(d);
             }
-            Debug.WriteLine(data.ToArray());
+            if(data.Count > 0)
+            {
+                KeyCongfig.run(data[0]);
+                Debug.WriteLine("run", data[0]);
+            }
         }
         /// <summary>
         /// Invoked when the application is launched.

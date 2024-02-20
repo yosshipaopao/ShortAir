@@ -1,27 +1,15 @@
 using Microsoft.UI;
 using Microsoft.UI.Windowing;
 using Microsoft.UI.Xaml;
-using Microsoft.UI.Xaml.Controls;
-using Microsoft.UI.Xaml.Controls.Primitives;
-using Microsoft.UI.Xaml.Data;
-using Microsoft.UI.Xaml.Input;
-using Microsoft.UI.Xaml.Media;
-using Microsoft.UI.Xaml.Navigation;
 using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Timers;
-using System.Runtime.InteropServices.WindowsRuntime;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
+using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.Threading.Tasks;
+using Windows.Devices.Bluetooth;
 using Windows.Devices.Bluetooth.Advertisement;
 using Windows.Devices.Bluetooth.GenericAttributeProfile;
-using Windows.Devices.Bluetooth;
-using System.Diagnostics;
 using Windows.Graphics;
-using System.Collections.ObjectModel;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -36,6 +24,8 @@ namespace ShortAir
         App mainApp;
         public IEnumerable<string> Items { get; }
         public ObservableCollection<KeyCongfig> keyCongfigs;
+        BluetoothLEDevice device;
+        GattCharacteristic c;
         public MainWindow(App app)
         {
             this.InitializeComponent();
@@ -65,12 +55,13 @@ namespace ShortAir
                 }
             };
             watcher.Stopped += (s, e) => {
+                Debug.WriteLine("dis connected");
                 mainApp.bluethoothConnected = false;
             };
             watcher.ScanningMode = BluetoothLEScanningMode.Active;
             console( "Searching Device");
             watcher.Start();
-            await Task.Delay(3000);
+            await Task.Delay(2000);
             watcher.Stop();
             if (btaddr == 0)
             {
@@ -78,7 +69,7 @@ namespace ShortAir
                 return -1;
             }
             console( "Connecting Device");
-            BluetoothLEDevice device = await BluetoothLEDevice.FromBluetoothAddressAsync(btaddr);
+            device = await BluetoothLEDevice.FromBluetoothAddressAsync(btaddr);
             console("Connected");
             GattDeviceServicesResult services = await device.GetGattServicesForUuidAsync(new Guid(mainApp.SERVICE_UUID));
             switch (services.Status)
@@ -112,10 +103,10 @@ namespace ShortAir
                     console("Characteristic:ProtocolError");
                     return -7;
             }
-            GattCharacteristic c = characteristics.Characteristics[0];
+            c = characteristics.Characteristics[0];
             c.ValueChanged += mainApp.onValueChanged;
             GattWriteResult result = await c.WriteClientCharacteristicConfigurationDescriptorWithResultAsync(GattClientCharacteristicConfigurationDescriptorValue.Notify);
-            switch (characteristics.Status)
+            switch (result.Status)
             {
                 case GattCommunicationStatus.Success:
                     console("Subscription:Success");
@@ -130,8 +121,8 @@ namespace ShortAir
                     console("Subscription:ProtocolError");
                     return -10;
             }
-            await Task.Delay(1000);
             mainApp.bluethoothConnected = true;
+            await Task.Delay(1000);
             console("Connected");
             return 0;
         }
@@ -142,11 +133,20 @@ namespace ShortAir
                 connectButton.IsEnabled = false;
                 await ConnectBluetooth();
                 connectButton.IsEnabled = true;
+                connectButton.Content = "disconnect";
             }
             else
             {
-                connectButton.IsEnabled = false;
-                console("connected");   
+                var result = await c.WriteClientCharacteristicConfigurationDescriptorAsync(GattClientCharacteristicConfigurationDescriptorValue.None);
+                if (result == GattCommunicationStatus.Success)
+                {
+                    c.ValueChanged -= mainApp.onValueChanged;
+                    mainApp.bluethoothConnected = false;
+                }
+                device?.Dispose();
+                device = null;
+                connectButton.Content = "connect";
+                mainApp.bluethoothConnected = false;
             }
         }
 

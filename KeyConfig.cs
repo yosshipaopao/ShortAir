@@ -3,7 +3,6 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using Windows.Storage;
 using Windows.System;
@@ -160,6 +159,11 @@ namespace ShortAir
                 if(hasMouseInputs)inputInjector.InjectMouseInput(MouseInputs);
                 if(hasKeyBordInputs) inputInjector.InjectKeyboardInput(KeyBordInputs);
             }
+        }
+
+        public static void run(int i)
+        {
+            doAction(SevedKeyConfig[recives[i]] as string);
         }
 
         public KeyCongfig(string receive)

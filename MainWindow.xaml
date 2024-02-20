@@ -30,9 +30,10 @@
                 <ScrollViewer.Resources>
                     <StackLayout x:Name="VerticalStackLayout" Orientation="Vertical" Spacing="8"/>
                     <DataTemplate x:Key="HorizontalBarTemplate" x:DataType="local:KeyCongfig">
-                        <Grid ColumnDefinitions="*,2*">
+                        <Grid ColumnDefinitions="2*,4*,*">
                             <TextBlock Grid.Column="0" VerticalAlignment="Center" HorizontalAlignment="Left" Text="{x:Bind Recive}"/>
-                            <ComboBox Grid.Column="1" HorizontalAlignment="Stretch" ItemsSource="{x:Bind local:KeyCongfig.actions}" SelectionChanged="{x:Bind SelectionChanged}" SelectedItem="{x:Bind Action}" />
+                            <ComboBox Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Stretch" ItemsSource="{x:Bind local:KeyCongfig.actions.Keys}" SelectionChanged="{x:Bind SelectionChanged}" SelectedItem="{x:Bind Action}" />
+                            <Button Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Center" Click="{x:Bind TryAction}" Content="Try"/>  
                         </Grid>
                     </DataTemplate>
                 </ScrollViewer.Resources>

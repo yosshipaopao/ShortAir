@@ -36,7 +36,6 @@ namespace ShortAir
         App mainApp;
         public IEnumerable<string> Items { get; }
         public ObservableCollection<KeyCongfig> keyCongfigs;
-        private int MaxLength = 425;
         public MainWindow(App app)
         {
             this.InitializeComponent();

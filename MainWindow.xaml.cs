@@ -141,7 +141,6 @@ namespace ShortAir
                 if (result == GattCommunicationStatus.Success)
                 {
                     c.ValueChanged -= mainApp.onValueChanged;
-                    mainApp.bluethoothConnected = false;
                 }
                 device?.Dispose();
                 device = null;

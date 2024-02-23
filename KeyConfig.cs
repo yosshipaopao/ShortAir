@@ -18,10 +18,10 @@ namespace ShortAir
 
         public static List<string> recives = new List<string>() { 
             "circle",
-            "down",
             "LtoR",
-            "RtoL",
             "up",
+            "RtoL",
+            "down",
         };
 
         public static Dictionary<string, object> actions = new Dictionary<string, object>()

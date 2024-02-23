@@ -131,9 +131,9 @@ namespace ShortAir
             if (!mainApp.bluethoothConnected)
             {
                 connectButton.IsEnabled = false;
-                await ConnectBluetooth();
+                var status = await ConnectBluetooth();
                 connectButton.IsEnabled = true;
-                connectButton.Content = "disconnect";
+                if(status == 0)connectButton.Content = "disconnect";
             }
             else
             {
